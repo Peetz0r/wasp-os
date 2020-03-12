@@ -39,11 +39,11 @@ def _fill(mv, color: int, count: int, offset: int):
         p[2*(x+offset)    ] = colorhi
         p[2*(x+offset) + 1] = colorlo
 
-def _bounding_box(s, font):
+def _bounding_box(s, font, spacing=0):
     w = 0
     for ch in s:
         (_, h, wc) = font.get_ch(ch)
-        w += wc + 1
+        w += wc + 1 + spacing
 
     return (w, h)
 
@@ -129,7 +129,7 @@ class Draw565(object):
         """Set the font used for rendering text."""
         self._font = font
 
-    def string(self, s, x, y, width=None):
+    def string(self, s, x, y, width=None, spacing=0):
         """Draw a string at the supplied position.
 
         If no width is provided then the text will be left justified,
@@ -142,17 +142,19 @@ class Draw565(object):
         bgfg = self._bgfg
         font = self._font
 
+        (w, h) = _bounding_box(s, font, spacing)
         if width:
-            (w, h) = _bounding_box(s, font)
-            leftpad = (width - w) // 2
+            leftpad = spacing + (width - w) // 2
             rightpad = width - w - leftpad
-            display.fill(0, x, y, leftpad, h)
+            display.fill(0, x, y, leftpad+spacing, h)
             x += leftpad
 
         for ch in s:
             glyph = font.get_ch(ch)
             _draw_glyph(display, glyph, x, y, bgfg)
             x += glyph[2] + 1
+            display.fill(0x0008, x, y, spacing, h)
+            x += spacing
 
         if width:
-            display.fill(0, x, y, rightpad, h)
+            display.fill(0x0008, x, y, rightpad, h)
