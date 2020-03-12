@@ -34,7 +34,9 @@ class Backlight(object):
         mid = 1
         lo = 1
 
-        if level >= 3:
+        if level >= 4:
+            hi = mid = lo = 0
+        elif level == 3:
             hi = 0
         elif level == 2:
             mid = 0
@@ -44,6 +46,24 @@ class Backlight(object):
         self.hi(hi)
         self.mid(mid)
         self.lo(lo)
+
+    def get(self):
+        hi = self.hi()
+        mid = self.mid()
+        lo = self.lo()
+
+        if hi == mid == lo == 0:
+            level = 4
+        elif hi == 0:
+            level = 3
+        elif mid == 0:
+            level = 2
+        elif lo == 0:
+            level = 1
+        else:
+            level = 0
+
+        return level
 
 # Setup the display (and manage the backlight)
 backlight = Backlight(0)
