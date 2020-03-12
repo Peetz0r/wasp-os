@@ -4,6 +4,7 @@ import machine
 from apps.clock import ClockApp
 from apps.flashlight import FlashlightApp
 from apps.testapp import TestApp
+from apps.eightsegment import EightSegmentClockApp
 
 DOWN = 1
 UP = 2
@@ -22,9 +23,10 @@ class Manager(object):
         self.app = None
 
         self.applications = [
+                EightSegmentClockApp(),
                 ClockApp(),
                 FlashlightApp(),
-                TestApp()
+                TestApp(),
             ]
 
         self.watch.display.poweron()

@@ -1,6 +1,7 @@
 freeze('.', 'watch.py', opt=3)
 freeze('../..',
     (
+        'apps/eightsegment.py',
         'apps/clock.py',
         'apps/testapp.py',
         'apps/flashlight.py',
@@ -13,6 +14,7 @@ freeze('../..',
         'drivers/signal.py',
         'drivers/st7789.py',
         'drivers/vibrator.py',
+        'fonts/eightsegment.py',
         'fonts/clock.py',
         'fonts/sans24.py',
         'icons.py',
