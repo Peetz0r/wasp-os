@@ -29,7 +29,8 @@ class Manager(object):
 
         self.watch.display.poweron()
         self.switch(self.applications[0])
-        self.watch.backlight.set(2)
+        self.watch.backlight.set(3)
+        self.watch.vibrator.pulse(ms=100)
 
         self.sleep_at = watch.rtc.uptime + 90
         self.charging = True
@@ -131,7 +132,7 @@ class Manager(object):
             if self.watch.button.value() or self.charging != charging:
                 self.watch.display.poweron()
                 self.app.wake()
-                self.watch.backlight.set(2)
+                self.watch.backlight.set(3)
 
                 # Discard any pending touch events
                 _ = self.watch.touch.get_event()
