@@ -39,6 +39,10 @@ micropython:
 		--application micropython/ports/nrf/build-$(BOARD)-s132/firmware.hex \
 		micropython.zip
 
+adb-push:
+	adb shell mkdir -p /sdcard/wasp-os
+	adb push micropython.zip bootloader.zip /sdcard/wasp-os/
+
 dfu:
 	python3 -m nordicsemi dfu serial --package micropython.zip --port /dev/ttyACM0
 
