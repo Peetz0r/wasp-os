@@ -29,13 +29,14 @@ class Manager(object):
                 TestApp(),
             ]
 
+        self.sleep_at = watch.rtc.uptime + 10
+        self.charging = True
+        self.backlight = 3
+
         self.watch.display.poweron()
         self.switch(self.applications[0])
-        self.watch.backlight.set(3)
+        self.watch.backlight.set(self.backlight)
         self.watch.vibrator.pulse(ms=100)
-
-        self.sleep_at = watch.rtc.uptime + 90
-        self.charging = True
 
     def switch(self, app):
         if self.app:
@@ -82,7 +83,7 @@ class Manager(object):
         self.tick_expiry = self.watch.rtc.get_uptime_ms() + period_ms
 
     def handle_event(self, event):
-        self.sleep_at = self.watch.rtc.uptime + 15
+        self.sleep_at = self.watch.rtc.uptime + 10
 
         event_mask = self.event_mask
         if event[0] < 5:
@@ -111,13 +112,14 @@ class Manager(object):
                     self.app.tick(ticks)
 
             if self.watch.button.value():
-                self.sleep_at = self.watch.rtc.uptime + 15
+                self.sleep_at = self.watch.rtc.uptime + 10
 
             event = self.watch.touch.get_event()
             if event:
                 self.handle_event(event)
 
             if self.watch.rtc.uptime > self.sleep_at:
+                self.backlight = self.watch.backlight.get()
                 self.watch.backlight.set(0)
                 if not self.app.sleep():
                     self.switch(self.applications[0])
@@ -134,12 +136,12 @@ class Manager(object):
             if self.watch.button.value() or self.charging != charging:
                 self.watch.display.poweron()
                 self.app.wake()
-                self.watch.backlight.set(3)
+                self.watch.backlight.set(self.backlight)
 
                 # Discard any pending touch events
                 _ = self.watch.touch.get_event()
 
-                self.sleep_at = self.watch.rtc.uptime + 15
+                self.sleep_at = self.watch.rtc.uptime + 10
 
     def run(self):
         """Run the system manager synchronously.
