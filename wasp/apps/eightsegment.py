@@ -33,8 +33,7 @@ class EightSegmentClockApp(object):
     """
 
     def __init__(self):
-        self.meter = widgets.BatteryMeter()
-        self._minute = None
+        self.on_screen = None
 
     def handle_event(self, event_view):
         """Process events that the app is subscribed to."""
@@ -63,14 +62,13 @@ class EightSegmentClockApp(object):
 
     def swipe(self, event):
         watch.backlight.set(watch.backlight.get()+event[0]*-2+7)
-        watch.drawable.string('B%d' % (watch.backlight.get()), 100, 0, width=40)
 
     def wake(self):
-        self.update()
+        self.draw()
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        self._minute = None
+        self.on_screen = None
         watch.drawable.fill()
         self.update()
 
@@ -78,34 +76,35 @@ class EightSegmentClockApp(object):
         """Update the display"""
 
         draw = watch.drawable
-        now = watch.rtc.get_localtime()
-        print(now)
+        time = watch.rtc.get_localtime()
+        bat = (
+            watch.battery.voltage_mv(),
+            watch.battery.charging(),
+            watch.battery.power(),
+        )
+        now = (time, bat)
+        print(now, time[5:])
 
-        if self._minute is not now[4]:
-            draw.rleblit(digits.clock_colon, pos=(2*30+10, 80), fg=0x8000)
-            draw.rleblit(digits.clock_colon, pos=(5*30+10, 80), fg=0x8000)
-            draw.rleblit(DIGITS[now[4]  % 10],  pos=(4*30, 80), fg=0xf800)
-            draw.rleblit(DIGITS[now[4] // 10],  pos=(3*30, 80), fg=0xf800)
-            draw.rleblit(DIGITS[now[3]  % 10],  pos=(1*30, 80), fg=0xf800)
-            draw.rleblit(DIGITS[now[3] // 10],  pos=(0*30, 80), fg=0xf800)
+        if now is not self.on_screen:
+            draw.rleblit(digits.clock_colon, pos=(2*30+10, 32), fg=0x8000)
+            draw.rleblit(digits.clock_colon, pos=(5*30+10, 32), fg=0x8000)
+            draw.rleblit(DIGITS[time[4]  % 10],  pos=(4*30, 32), fg=0xf800)
+            draw.rleblit(DIGITS[time[4] // 10],  pos=(3*30, 32), fg=0xf800)
+            draw.rleblit(DIGITS[time[3]  % 10],  pos=(1*30, 32), fg=0xf800)
+            draw.rleblit(DIGITS[time[3] // 10],  pos=(0*30, 32), fg=0xf800)
 
-            draw.string(WEEKDAYS[now[6]], 0, 180, width=240, spacing=8)
-            draw.string('%04d - %02d - %02d' % (now[0], now[1], now[2]), 0, 210, width=240, spacing=2)
+            draw.set_color(0xffff) # white
+            draw.string(WEEKDAYS[time[6]], 0, 110, width=240, spacing=8)
+            draw.string('%04d - %02d - %02d' % (time[0], time[1], time[2]), 0, 140, width=240, spacing=3)
 
-        if watch.battery.power() or self._minute is not now[4]:
             if watch.battery.charging():
                 draw.set_color(0x07ff) # blue during charging
             elif watch.battery.power():
                 draw.set_color(0x07e0) # green when full
-            draw.string('%4.2fv' % (watch.battery.voltage_mv()/1000), 0, 0)
-            draw.set_color(0xffff) #white for everything else
-            draw.string('B%d' % (watch.backlight.get()), 100, 0, width=40)
+            draw.string('%4.2fv' % (watch.battery.voltage_mv()/1000), 0, 0, width=80)
 
-            self.meter.draw()
-            self.meter.update()
+        draw.rleblit(DIGITS[time[5]  % 10], pos=(7*30, 32), fg=0xf800)
+        draw.rleblit(DIGITS[time[5] // 10], pos=(6*30, 32), fg=0xf800)
 
-        draw.rleblit(DIGITS[now[5]  % 10], pos=(7*30, 80), fg=0xf800)
-        draw.rleblit(DIGITS[now[5] // 10], pos=(6*30, 80), fg=0xf800)
-
-        self._minute = now[4]
+        self.on_screen = now
         return True
