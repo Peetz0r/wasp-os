@@ -153,8 +153,9 @@ class Draw565(object):
             glyph = font.get_ch(ch)
             _draw_glyph(display, glyph, x, y, bgfg)
             x += glyph[2] + 1
-            display.fill(0x0000, x, y, spacing, h)
-            x += spacing
+            if spacing > 0:
+                display.fill(0x0000, x, y, spacing, h)
+                x += spacing
 
         if width:
             display.fill(0x0000, x, y, rightpad, h)
