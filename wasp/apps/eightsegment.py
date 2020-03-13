@@ -45,6 +45,7 @@ class EightSegmentClockApp(object):
 
     def foreground(self, system, effect=None):
         """Activate the application."""
+        print('fg')
         self.draw()
 
         system.request_tick(1000)
@@ -64,10 +65,12 @@ class EightSegmentClockApp(object):
         watch.backlight.set(watch.backlight.get()+event[0]*-2+7)
 
     def wake(self):
-        self.draw()
+        print('wake')
+        self.update()
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
+        print('draw')
         self.on_screen = None
         watch.drawable.fill()
         self.update()
