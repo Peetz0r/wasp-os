@@ -85,10 +85,11 @@ class EightSegmentClockApp(object):
             watch.battery.charging(),
             watch.battery.power(),
         )
-        now = (time, bat)
-        print(now, time[5:])
+        now = (time[:5], bat)
+        print(time, bat)
 
-        if now is not self.on_screen:
+        if not self.on_screen or (now != self.on_screen):
+            print("redraw")
             draw.rleblit(digits.clock_colon, pos=(2*30+10, 32), fg=0x8000)
             draw.rleblit(digits.clock_colon, pos=(5*30+10, 32), fg=0x8000)
             draw.rleblit(DIGITS[time[4]  % 10],  pos=(4*30, 32), fg=0xf800)
