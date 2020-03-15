@@ -88,6 +88,9 @@ class EightSegmentClockApp(object):
         now = (time[:5], bat)
         print(time, bat)
 
+        draw.rleblit(DIGITS[time[5]  % 10], pos=(7*30, 32), fg=0xf800)
+        draw.rleblit(DIGITS[time[5] // 10], pos=(6*30, 32), fg=0xf800)
+
         if not self.on_screen or (now != self.on_screen):
             print("redraw")
             draw.rleblit(digits.clock_colon, pos=(2*30+10, 32), fg=0x8000)
@@ -106,9 +109,6 @@ class EightSegmentClockApp(object):
             elif watch.battery.power():
                 draw.set_color(0x07e0) # green when full
             draw.string('%4.2fv' % (watch.battery.voltage_mv()/1000), 0, 0, width=80)
-
-        draw.rleblit(DIGITS[time[5]  % 10], pos=(7*30, 32), fg=0xf800)
-        draw.rleblit(DIGITS[time[5] // 10], pos=(6*30, 32), fg=0xf800)
 
         self.on_screen = now
         return True
