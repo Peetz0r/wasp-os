@@ -81,7 +81,7 @@ class EightSegmentClockApp(object):
         draw = watch.drawable
         time = watch.rtc.get_localtime()
         bat = (
-            watch.battery.voltage_mv(),
+            round(watch.battery.voltage_mv()/1000,1),
             watch.battery.charging(),
             watch.battery.power(),
         )
@@ -104,11 +104,11 @@ class EightSegmentClockApp(object):
             draw.string(WEEKDAYS[time[6]], 0, 110, width=240, spacing=8)
             draw.string('%04d - %02d - %02d' % (time[0], time[1], time[2]), 0, 140, width=240, spacing=3)
 
-            if watch.battery.charging():
+            if bat[1]:
                 draw.set_color(0x07ff) # blue during charging
-            elif watch.battery.power():
+            elif bat[2]:
                 draw.set_color(0x07e0) # green when full
-            draw.string('%4.2fv' % (watch.battery.voltage_mv()/1000), 0, 0, width=80)
+            draw.string('%3.1fv' % bat[0], 0, 0, width=80)
 
         self.on_screen = now
         return True
