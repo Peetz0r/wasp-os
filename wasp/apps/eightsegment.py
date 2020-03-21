@@ -45,7 +45,6 @@ class EightSegmentClockApp(object):
 
     def foreground(self, system, effect=None):
         """Activate the application."""
-        print('fg')
         self.draw()
 
         system.request_tick(1000)
@@ -65,12 +64,10 @@ class EightSegmentClockApp(object):
         watch.backlight.set(watch.backlight.get()+event[0]*-2+7)
 
     def wake(self):
-        print('wake')
         self.update()
 
     def draw(self, effect=None):
         """Redraw the display from scratch."""
-        print('draw')
         self.on_screen = None
         watch.drawable.fill()
         self.update()
@@ -86,13 +83,12 @@ class EightSegmentClockApp(object):
             watch.battery.power(),
         )
         now = (time[:5], bat)
-        print(time, bat)
+        print("%02d:%02d:%02d, %3.1fv" % (time[3:6] + (bat[0],)))
 
         draw.rleblit(DIGITS[time[5]  % 10], pos=(7*30, 32), fg=0xf800)
         draw.rleblit(DIGITS[time[5] // 10], pos=(6*30, 32), fg=0xf800)
 
         if not self.on_screen or (now != self.on_screen):
-            print("redraw")
             draw.rleblit(digits.clock_colon, pos=(2*30+10, 32), fg=0x8000)
             draw.rleblit(digits.clock_colon, pos=(5*30+10, 32), fg=0x8000)
             draw.rleblit(DIGITS[time[4]  % 10],  pos=(4*30, 32), fg=0xf800)
