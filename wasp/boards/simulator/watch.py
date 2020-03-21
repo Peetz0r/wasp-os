@@ -26,7 +26,7 @@ class Backlight(object):
         turned off (e.g. the watch goes to sleep) then we will simulate
         a button press in order to turn the watch back on again.
         """
-        self._level = min(max(level,0),4)
+        self._level = min(max(level,1),4)
         print(f'BACKLIGHT: {level}')
 
         button.value(bool(level))

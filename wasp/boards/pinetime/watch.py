@@ -40,7 +40,7 @@ class Backlight(object):
             hi = 0
         elif level == 2:
             mid = 0
-        elif level == 1:
+        elif level <= 1:
             lo = 0
 
         self.hi(hi)
