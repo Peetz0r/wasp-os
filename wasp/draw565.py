@@ -1,5 +1,5 @@
 import fonts.sans24
-import micropython
+import micropython, time
 
 @micropython.viper
 def _bitblit(bitbuf, pixels, bgfg: int, count: int):
@@ -89,7 +89,7 @@ class Draw565(object):
         self._display.fill(bg, x, y, w, h)
 
     @micropython.native
-    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0):
+    def rleblit(self, image, pos=(0, 0), fg=0xffff, bg=0, slowdown=None):
         """Decode and draw a 1-bit RLE image."""
         display = self._display
         (sx, sy, rle) = image
@@ -115,6 +115,8 @@ class Draw565(object):
                 color = fg
             else:
                 color = bg
+            if slowdown is not None:
+                time.sleep_us(slowdown)
 
     def set_color(self, color, bg=0):
         """Set the foreground (color) and background (bg) color.
